@@ -26,6 +26,18 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="pagination">
+      <button
+        v-for="page in totalPages"
+        :key="page"
+        @click="setPage(page)"
+        :class="{ active: page === currentPage }"
+        class="pagination__button"
+      >
+        {{ page }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -42,8 +54,31 @@ onMounted(() => {
 })
 
 const users = computed(() => store.getters.allUsers)
+const totalPages = computed(() => store.getters.totalPages)
+const currentPage = computed(() => store.state.currentPage)
 
 const removeUser = userId => {
   store.dispatch('deleteUser', userId)
 }
+
+const setPage = page => {
+  store.dispatch('setPage', page)
+}
 </script>
+
+<style scoped>
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination__button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination__button.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+</style>

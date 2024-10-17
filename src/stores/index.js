@@ -8,6 +8,7 @@ const store = createStore({
     users: [],
     sortField: '',
     sortDirection: 'asc',
+    searchQuery: '',
     currentPage: 1,
     pageSize: 5,
   },
@@ -19,11 +20,20 @@ const store = createStore({
       state.sortField = field
       state.sortDirection = direction
     },
+    SET_SEARCH_QUERY(state, query) {
+      state.searchQuery = query
+    },
     DELETE_USER(state, userId) {
       state.users = state.users.filter(user => user.id !== userId)
     },
     SET_PAGE(state, page) {
       state.currentPage = page
+    },
+    RESET_FILTERS(state) {
+      state.searchQuery = ''
+      state.sortField = ''
+      state.sortDirection = 'asc'
+      state.currentPage = 1
     },
   },
   actions: {
@@ -56,28 +66,43 @@ const store = createStore({
 
       commit('SET_USERS', sortedUsers)
     },
+    searchUsers({ commit }, query) {
+      commit('SET_SEARCH_QUERY', query)
+    },
     resetFilters({ commit, dispatch }) {
-      commit('SET_SORT', { field: '', direction: 'asc' })
+      commit('RESET_FILTERS')
       dispatch('fetchUsers')
-    },
-    deleteUser({ commit }, userId) {
-      commit('DELETE_USER', userId)
-    },
-    setPage({ commit }, page) {
-      commit('SET_PAGE', page)
     },
   },
   getters: {
-    allUsers(state) {
+    filteredUsers(state) {
+      const filtered = state.users.filter(
+        user =>
+          user.username
+            .toLowerCase()
+            .includes(state.searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(state.searchQuery.toLowerCase()),
+      )
+
       const start = (state.currentPage - 1) * state.pageSize
       const end = state.currentPage * state.pageSize
-      return state.users.slice(start, end)
+
+      return filtered.slice(start, end)
     },
-    totalUsers(state) {
-      return state.users.length
+    totalFilteredUsers(state) {
+      return state.users.filter(
+        user =>
+          user.username
+            .toLowerCase()
+            .includes(state.searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(state.searchQuery.toLowerCase()),
+      ).length
     },
-    totalPages(state) {
-      return Math.ceil(state.users.length / state.pageSize)
+    totalPages(state, getters) {
+      return Math.ceil(getters.totalFilteredUsers / state.pageSize)
+    },
+    isFiltered(state) {
+      return state.sortField !== '' || state.searchQuery !== ''
     },
   },
 })
