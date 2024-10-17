@@ -8,9 +8,9 @@ const store = createStore({
     users: [],
     sortField: '',
     sortDirection: 'asc',
-    searchQuery: '',
     currentPage: 1,
     pageSize: 5,
+    searchQuery: '',
   },
   mutations: {
     SET_USERS(state, users) {
@@ -20,20 +20,14 @@ const store = createStore({
       state.sortField = field
       state.sortDirection = direction
     },
-    SET_SEARCH_QUERY(state, query) {
-      state.searchQuery = query
-    },
     DELETE_USER(state, userId) {
       state.users = state.users.filter(user => user.id !== userId)
     },
     SET_PAGE(state, page) {
       state.currentPage = page
     },
-    RESET_FILTERS(state) {
-      state.searchQuery = ''
-      state.sortField = ''
-      state.sortDirection = 'asc'
-      state.currentPage = 1
+    SET_SEARCH_QUERY(state, query) {
+      state.searchQuery = query
     },
   },
   actions: {
@@ -66,43 +60,53 @@ const store = createStore({
 
       commit('SET_USERS', sortedUsers)
     },
-    searchUsers({ commit }, query) {
-      commit('SET_SEARCH_QUERY', query)
-    },
     resetFilters({ commit, dispatch }) {
-      commit('RESET_FILTERS')
+      commit('SET_SORT', { field: '', direction: 'asc' })
+      commit('SET_SEARCH_QUERY', '')
       dispatch('fetchUsers')
+    },
+    deleteUser({ commit }, userId) {
+      commit('DELETE_USER', userId)
+    },
+    setPage({ commit }, page) {
+      commit('SET_PAGE', page)
+    },
+    setSearchQuery({ commit }, query) {
+      commit('SET_SEARCH_QUERY', query)
     },
   },
   getters: {
-    filteredUsers(state) {
-      const filtered = state.users.filter(
-        user =>
-          user.username
-            .toLowerCase()
-            .includes(state.searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(state.searchQuery.toLowerCase()),
-      )
-
+    allUsers(state) {
       const start = (state.currentPage - 1) * state.pageSize
       const end = state.currentPage * state.pageSize
 
-      return filtered.slice(start, end)
+      const filteredUsers = state.users.filter(user => {
+        const usernameMatch = user.username
+          .toLowerCase()
+          .includes(state.searchQuery.toLowerCase())
+        const emailMatch = user.email
+          .toLowerCase()
+          .includes(state.searchQuery.toLowerCase())
+        return usernameMatch || emailMatch
+      })
+
+      return filteredUsers.slice(start, end)
     },
-    totalFilteredUsers(state) {
-      return state.users.filter(
-        user =>
-          user.username
-            .toLowerCase()
-            .includes(state.searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(state.searchQuery.toLowerCase()),
-      ).length
+    totalUsers(state) {
+      const filteredUsers = state.users.filter(user => {
+        const usernameMatch = user.username
+          .toLowerCase()
+          .includes(state.searchQuery.toLowerCase())
+        const emailMatch = user.email
+          .toLowerCase()
+          .includes(state.searchQuery.toLowerCase())
+        return usernameMatch || emailMatch
+      })
+
+      return filteredUsers.length
     },
     totalPages(state, getters) {
-      return Math.ceil(getters.totalFilteredUsers / state.pageSize)
-    },
-    isFiltered(state) {
-      return state.sortField !== '' || state.searchQuery !== ''
+      return Math.ceil(getters.totalUsers / state.pageSize)
     },
   },
 })
