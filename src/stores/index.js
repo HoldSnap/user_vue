@@ -8,6 +8,8 @@ const store = createStore({
     users: [],
     sortField: '',
     sortDirection: 'asc',
+    currentPage: 1,
+    pageSize: 5,
   },
   mutations: {
     SET_USERS(state, users) {
@@ -16,6 +18,12 @@ const store = createStore({
     SET_SORT(state, { field, direction }) {
       state.sortField = field
       state.sortDirection = direction
+    },
+    DELETE_USER(state, userId) {
+      state.users = state.users.filter(user => user.id !== userId)
+    },
+    SET_PAGE(state, page) {
+      state.currentPage = page
     },
   },
   actions: {
@@ -52,13 +60,24 @@ const store = createStore({
       commit('SET_SORT', { field: '', direction: 'asc' })
       dispatch('fetchUsers')
     },
+    deleteUser({ commit }, userId) {
+      commit('DELETE_USER', userId)
+    },
+    setPage({ commit }, page) {
+      commit('SET_PAGE', page)
+    },
   },
   getters: {
     allUsers(state) {
-      return state.users
+      const start = (state.currentPage - 1) * state.pageSize
+      const end = state.currentPage * state.pageSize
+      return state.users.slice(start, end)
     },
-    isFiltered(state) {
-      return state.sortField !== ''
+    totalUsers(state) {
+      return state.users.length
+    },
+    totalPages(state) {
+      return Math.ceil(state.users.length / state.pageSize)
     },
   },
 })
