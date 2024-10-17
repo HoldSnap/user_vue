@@ -8,7 +8,7 @@
         v-model="searchQuery"
         @input="updateSearchQuery"
       />
-      <button class="search__clear" v-if="isSearching" @click="clearFilters">
+      <button class="search__clear" v-if="isFilterActive" @click="clearFilters">
         Очистить фильтр
       </button>
     </div>
@@ -28,7 +28,9 @@ const searchQuery = computed({
   set: value => store.dispatch('setSearchQuery', value),
 })
 
-const isSearching = computed(() => store.state.searchQuery !== '')
+const isFilterActive = computed(() => {
+  return store.state.searchQuery !== '' || store.state.sortField !== ''
+})
 
 const updateSearchQuery = () => {
   store.dispatch('setSearchQuery', searchQuery.value)
@@ -38,3 +40,15 @@ const clearFilters = () => {
   store.dispatch('resetFilters')
 }
 </script>
+
+<style scoped lang="scss">
+@import '../assets/variables';
+
+.user-list__search {
+  width: 100%;
+  box-shadow: 0px 18px 15px 0px #94949426;
+  height: 102px;
+  display: flex;
+  align-items: center;
+}
+</style>

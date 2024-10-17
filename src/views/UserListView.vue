@@ -16,4 +16,8 @@ import SortOptions from '../components/SortOptions.vue'
 import UserTable from '../components/UserTable.vue'
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.user-list {
+  padding: 12px 27px;
+}
+</style>

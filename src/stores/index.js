@@ -6,6 +6,7 @@ import axios from 'axios'
 const store = createStore({
   state: {
     users: [],
+    deletedUsers: [],
     sortField: '',
     sortDirection: 'asc',
     currentPage: 1,
@@ -21,6 +22,7 @@ const store = createStore({
       state.sortDirection = direction
     },
     DELETE_USER(state, userId) {
+      state.deletedUsers.push(userId)
       state.users = state.users.filter(user => user.id !== userId)
     },
     SET_PAGE(state, page) {
@@ -29,14 +31,20 @@ const store = createStore({
     SET_SEARCH_QUERY(state, query) {
       state.searchQuery = query
     },
+    CLEAR_DELETED_USERS(state) {
+      state.deletedUsers = []
+    },
   },
   actions: {
-    async fetchUsers({ commit }) {
+    async fetchUsers({ commit, state }) {
       try {
         const response = await axios.get(
           'https://5ebbb8e5f2cfeb001697d05c.mockapi.io/users',
         )
-        commit('SET_USERS', response.data)
+        const filteredUsers = response.data.filter(
+          user => !state.deletedUsers.includes(user.id),
+        )
+        commit('SET_USERS', filteredUsers)
       } catch (error) {
         console.error('Ошибка при загрузке пользователей:', error)
       }
@@ -73,6 +81,9 @@ const store = createStore({
     },
     setSearchQuery({ commit }, query) {
       commit('SET_SEARCH_QUERY', query)
+    },
+    clearDeletedUsers({ commit }) {
+      commit('CLEAR_DELETED_USERS')
     },
   },
   getters: {
