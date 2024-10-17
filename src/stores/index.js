@@ -6,13 +6,16 @@ import axios from 'axios'
 const store = createStore({
   state: {
     users: [],
+    sortField: '',
+    sortDirection: 'asc',
   },
   mutations: {
     SET_USERS(state, users) {
       state.users = users
     },
-    DELETE_USER(state, userId) {
-      state.users = state.users.filter(user => user.id !== userId)
+    SET_SORT(state, { field, direction }) {
+      state.sortField = field
+      state.sortDirection = direction
     },
   },
   actions: {
@@ -26,13 +29,36 @@ const store = createStore({
         console.error('Ошибка при загрузке пользователей:', error)
       }
     },
-    deleteUser({ commit }, userId) {
-      commit('DELETE_USER', userId)
+    sortUsers({ commit, state }, field) {
+      const direction =
+        state.sortField === field && state.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc'
+      commit('SET_SORT', { field, direction })
+
+      const sortedUsers = [...state.users].sort((a, b) => {
+        if (field === 'registration_date') {
+          return direction === 'asc'
+            ? new Date(a.registration_date) - new Date(b.registration_date)
+            : new Date(b.registration_date) - new Date(a.registration_date)
+        } else if (field === 'rating') {
+          return direction === 'asc' ? a.rating - b.rating : b.rating - a.rating
+        }
+      })
+
+      commit('SET_USERS', sortedUsers)
+    },
+    resetFilters({ commit, dispatch }) {
+      commit('SET_SORT', { field: '', direction: 'asc' })
+      dispatch('fetchUsers')
     },
   },
   getters: {
     allUsers(state) {
       return state.users
+    },
+    isFiltered(state) {
+      return state.sortField !== ''
     },
   },
 })
