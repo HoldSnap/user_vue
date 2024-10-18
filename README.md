@@ -1,7 +1,7 @@
 ## Установка и запуск
 
 1. Клонируйте репозиторий:
-
+   через ssh
    ```sh
    git clone git@github.com:HoldSnap/user_vue.git
    ```
