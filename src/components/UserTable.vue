@@ -18,7 +18,7 @@
           </td>
           <td class="table__cell">{{ user.rating }}</td>
           <td class="table__cell">
-            <button class="table__delete" @click="removeUser(user.id)">
+            <button class="table__delete" @click="showDeleteModal(user.id)">
               <img :src="CancelIcon" alt="Удалить" class="delete-icon" />
             </button>
           </td>
@@ -40,12 +40,18 @@
       </button>
     </div>
   </div>
+  <DeleteModal
+    :isVisible="isDeleteModalVisible"
+    @confirm="handleConfirmDelete"
+    @cancel="handleCancelDelete"
+  />
 </template>
 
 <script setup>
 import CancelIcon from '@/assets/svgs/cansel.svg'
 import { useStore } from 'vuex'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import DeleteModal from '@/components/DeleteButton.vue'
 ;('use strict')
 
 const store = useStore()
@@ -53,7 +59,22 @@ const store = useStore()
 onMounted(() => {
   store.dispatch('fetchUsers')
 })
+const isDeleteModalVisible = ref(false)
+const userIdToDelete = ref(null)
 
+const showDeleteModal = userId => {
+  userIdToDelete.value = userId
+  isDeleteModalVisible.value = true
+}
+
+const handleConfirmDelete = () => {
+  removeUser(userIdToDelete.value)
+  isDeleteModalVisible.value = false
+}
+
+const handleCancelDelete = () => {
+  isDeleteModalVisible.value = false
+}
 const users = computed(() => store.getters.allUsers)
 const totalPages = computed(() => store.getters.totalPages)
 const currentPage = computed(() => store.state.currentPage)
