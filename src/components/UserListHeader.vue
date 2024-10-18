@@ -10,5 +10,6 @@ h1 {
   font-family: $font-family-base;
   font-weight: bold;
   font-size: 24px;
+  color: rgb(51, 51, 51);
 }
 </style>

@@ -32,6 +32,12 @@
         v-model="searchQuery"
         @input="updateSearchQuery"
       />
+      <img
+        v-if="isFilterActive"
+        src="@/assets/svgs/clean.svg"
+        alt="Очистить"
+        class="search__clear-icon"
+      />
       <button class="search__clear" v-if="isFilterActive" @click="clearFilters">
         Очистить фильтр
       </button>
@@ -66,7 +72,7 @@ const clearFilters = () => {
 </script>
 
 <style scoped lang="scss">
-@import '../assets/variables';
+@import '@/assets/variables';
 
 .search {
   position: relative;
@@ -83,6 +89,10 @@ const clearFilters = () => {
 }
 
 .search__input {
+  font-family: $font-family-base;
+
+  font-size: 16px;
+
   width: 100%;
   height: 44px;
   padding: 12px 16px 12px 44px;
@@ -92,13 +102,20 @@ const clearFilters = () => {
   color: #333;
 }
 
+.search__clear-icon {
+  height: 18px;
+  vertical-align: middle;
+  margin-bottom: 8px;
+  width: auto;
+}
+
 .search__clear {
-  margin-left: 16px;
   padding: 12px;
   background: none;
   border: none;
   font-size: 16px;
-  color: #333;
+  font-family: $font-family-base;
+  color: rgb(79, 79, 79);
   cursor: pointer;
 }
 
