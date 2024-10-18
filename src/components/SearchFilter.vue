@@ -74,59 +74,61 @@ const clearFilters = () => {
 <style scoped lang="scss">
 @import '@/assets/variables';
 
-.search {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
+.user-list {
+  &__search {
+    margin-top: 20px;
+    margin-bottom: 72px;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    padding-right: 5%;
+    box-shadow: 0px 18px 15px 0px #94949426;
+    background-color: #fff;
+    border-radius: 7px;
+    height: 102px;
 
-.search__icon {
-  position: absolute;
-  left: 16px;
-  top: 30%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
+    & .search {
+      position: relative;
+      width: 100%;
+      height: 100%;
 
-.search__input {
-  font-family: $font-family-base;
+      &__icon {
+        position: absolute;
+        left: 16px;
+        top: 30%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
 
-  font-size: 16px;
+      &__input {
+        font-family: $font-family-base;
+        font-size: 16px;
+        width: 100%;
+        height: 44px;
+        padding: 12px 16px 12px 44px;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+        color: #333;
+      }
 
-  width: 100%;
-  height: 44px;
-  padding: 12px 16px 12px 44px;
-  border: 1px solid #e5e5e5;
-  border-radius: 4px;
-  background-color: #f1f1f1;
-  color: #333;
-}
+      &__clear-icon {
+        height: 18px;
+        vertical-align: middle;
+        margin-bottom: 8px;
+        width: auto;
+      }
 
-.search__clear-icon {
-  height: 18px;
-  vertical-align: middle;
-  margin-bottom: 8px;
-  width: auto;
-}
-
-.search__clear {
-  padding: 12px;
-  background: none;
-  border: none;
-  font-size: 16px;
-  font-family: $font-family-base;
-  color: rgb(79, 79, 79);
-  cursor: pointer;
-}
-
-.user-list__search {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  padding-right: 5%;
-  box-shadow: 0px 18px 15px 0px #94949426;
-  background-color: #fff;
-  border-radius: 7px;
-  height: 102px;
+      &__clear {
+        padding: 12px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        font-family: $font-family-base;
+        color: rgb(79, 79, 79);
+        cursor: pointer;
+      }
+    }
+  }
 }
 </style>
